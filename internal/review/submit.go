@@ -75,7 +75,7 @@ func Submit(client *gh.Client, manifest *model.Manifest, options SubmitOptions) 
 				for _, proposed := range manifest.Comments {
 					found := false
 					for _, comment := range comments {
-						if sameFinding(proposed, comment) {
+						if comment.PullRequestReviewID == existingEntry.ReviewID && sameFinding(proposed, comment) {
 							found = true
 							break
 						}

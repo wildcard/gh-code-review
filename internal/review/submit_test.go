@@ -253,15 +253,20 @@ func TestSubmitReconcilesIdempotentReplay(t *testing.T) {
 		case "/repos/o/r/pulls/7/reviews/20":
 			return apiResponse(request, 200, `{"id":20,"state":"COMMENTED","html_url":"https://github.test/review/20"}`), nil
 		case "/repos/o/r/pulls/7/comments":
-			return apiResponse(request, 200, `[{"id":99,"path":"a.go","line":1,"side":"RIGHT","start_line":0,"start_side":null,"body":"Finding."}]`), nil
+			return apiResponse(request, 200, `[
+				{"id":98,"pull_request_review_id":19,"path":"a.go","subject_type":"line","line":1,"side":"RIGHT","body":"Finding."},
+				{"id":99,"pull_request_review_id":20,"path":"a.go","subject_type":"line","line":1,"side":"RIGHT","body":"Finding."},
+				{"id":100,"pull_request_review_id":20,"path":"asset.png","subject_type":"file","line":1,"side":"RIGHT","body":"File-wide finding."}
+			]`), nil
 		default:
 			t.Fatalf("idempotent replay made unexpected request %s %s", request.Method, request.URL.String())
 			return nil, nil
 		}
 	}))
-	manifest := manifestWith([]model.Comment{{
-		ClientID: "line-1", Subject: "line", Path: "a.go", Line: 1, Side: "RIGHT", Body: "Finding.",
-	}})
+	manifest := manifestWith([]model.Comment{
+		{ClientID: "line-1", Subject: "line", Path: "a.go", Line: 1, Side: "RIGHT", Body: "Finding."},
+		{ClientID: "file-1", Subject: "file", Path: "asset.png", Body: "File-wide finding."},
+	})
 	manifest.IdempotencyKey = "run-1"
 	receipt, err := Submit(client, manifest, SubmitOptions{Journal: store})
 	if err != nil {

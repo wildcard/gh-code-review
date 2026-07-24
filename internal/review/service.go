@@ -154,8 +154,19 @@ func currentLogin(client *gh.Client) string {
 }
 
 func sameFinding(proposed model.Comment, existing gh.ReviewComment) bool {
-	if proposed.Path != existing.Path ||
-		proposed.Line != existing.Line ||
+	if proposed.Path != existing.Path {
+		return false
+	}
+	if proposed.Subject == "file" {
+		if !strings.EqualFold(existing.Subject, "file") {
+			return false
+		}
+		return normalize(proposed.GitHubBody()) == normalize(existing.Body)
+	}
+	if existing.Subject != "" && !strings.EqualFold(existing.Subject, "line") {
+		return false
+	}
+	if proposed.Line != existing.Line ||
 		!strings.EqualFold(proposed.Side, existing.Side) ||
 		proposed.StartLine != existing.StartLine ||
 		!strings.EqualFold(proposed.StartSide, existing.StartSide) {

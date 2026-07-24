@@ -74,19 +74,21 @@ type Review struct {
 }
 
 type ReviewComment struct {
-	ID        int64  `json:"id"`
-	NodeID    string `json:"node_id"`
-	Path      string `json:"path"`
-	Body      string `json:"body"`
-	CommitID  string `json:"commit_id"`
-	Line      int    `json:"line"`
-	Side      string `json:"side"`
-	StartLine int    `json:"start_line"`
-	StartSide string `json:"start_side"`
-	InReplyTo int64  `json:"in_reply_to_id"`
-	HTMLURL   string `json:"html_url"`
-	Position  *int   `json:"position"`
-	User      User   `json:"user"`
+	ID                  int64  `json:"id"`
+	NodeID              string `json:"node_id"`
+	PullRequestReviewID int64  `json:"pull_request_review_id"`
+	Path                string `json:"path"`
+	Body                string `json:"body"`
+	CommitID            string `json:"commit_id"`
+	Subject             string `json:"subject_type"`
+	Line                int    `json:"line"`
+	Side                string `json:"side"`
+	StartLine           int    `json:"start_line"`
+	StartSide           string `json:"start_side"`
+	InReplyTo           int64  `json:"in_reply_to_id"`
+	HTMLURL             string `json:"html_url"`
+	Position            *int   `json:"position"`
+	User                User   `json:"user"`
 }
 
 type CheckRun struct {
