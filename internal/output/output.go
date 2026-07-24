@@ -60,7 +60,7 @@ func Write(w io.Writer, envelope Envelope) error {
 
 func WriteSuccess(w io.Writer, operation, repository string, pullRequest int, result interface{}) int {
 	if err := Write(w, Envelope{OK: true, Operation: operation, Repository: repository, PullRequest: pullRequest, Result: result}); err != nil {
-		fmt.Fprintf(w, `{"schema_version":"1.0","ok":false,"operation":%q,"error":{"code":"OUTPUT","message":%q,"retryable":false}}`+"\n", operation, err.Error())
+		_, _ = fmt.Fprintf(w, `{"schema_version":"1.0","ok":false,"operation":%q,"error":{"code":"OUTPUT","message":%q,"retryable":false}}`+"\n", operation, err.Error())
 		return ExitInternal
 	}
 	return ExitSuccess

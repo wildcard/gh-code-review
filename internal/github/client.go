@@ -409,11 +409,13 @@ func (c *Client) request(method, path string, body io.Reader, out interface{}) e
 		if shouldRetry(response) && attempt < 2 {
 			delay := retryDelay(response, attempt)
 			_, _ = io.Copy(io.Discard, response.Body)
-			response.Body.Close()
+			_ = response.Body.Close()
 			time.Sleep(delay)
 			continue
 		}
-		defer response.Body.Close()
+		defer func() {
+			_ = response.Body.Close()
+		}()
 		if response.StatusCode >= http.StatusBadRequest {
 			return api.HandleHTTPError(response)
 		}
@@ -446,7 +448,7 @@ func (c *Client) paginate(path string, target interface{}) error {
 			if shouldRetry(response) && attempt < 2 {
 				delay := retryDelay(response, attempt)
 				_, _ = io.Copy(io.Discard, response.Body)
-				response.Body.Close()
+				_ = response.Body.Close()
 				time.Sleep(delay)
 				continue
 			}
@@ -454,15 +456,17 @@ func (c *Client) paginate(path string, target interface{}) error {
 		}
 		if response.StatusCode >= http.StatusBadRequest {
 			err := api.HandleHTTPError(response)
-			response.Body.Close()
+			_ = response.Body.Close()
 			return err
 		}
 		if err := appendPage(response.Body, target); err != nil {
-			response.Body.Close()
+			_ = response.Body.Close()
 			return err
 		}
 		next = nextLink(response.Header.Get("Link"))
-		response.Body.Close()
+		if err := response.Body.Close(); err != nil {
+			return fmt.Errorf("close GitHub response: %w", err)
+		}
 	}
 	return nil
 }
