@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0",
+  "repository": "owner/repo",
+  "pull_request": 42,
+  "expected_head_sha": "replace-with-inspected-head-sha",
+  "event": "COMMENT",
+  "summary": "Focused review of the changed request path.",
+  "idempotency_key": "review-42-replace-with-head-sha",
+  "comments": [
+    {
+      "client_id": "guard-result-1",
+      "subject": "line",
+      "path": "internal/service.go",
+      "line": 112,
+      "side": "RIGHT",
+      "body": "Return the error before dereferencing the result.",
+      "replacement": "if err != nil {\n    return nil, err\n}",
+      "severity": "blocking",
+      "category": "correctness",
+      "confidence": 0.96
+    }
+  ]
+}

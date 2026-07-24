@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0",
+  "repository": "owner/repo",
+  "pull_request": 7,
+  "expected_head_sha": "abc123",
+  "event": "COMMENT",
+  "summary": "Line-only fixture.",
+  "comments": [
+    {
+      "client_id": "range-1",
+      "subject": "line",
+      "path": "src/service.go",
+      "start_line": 11,
+      "start_side": "RIGHT",
+      "line": 13,
+      "side": "RIGHT",
+      "body": "Replace this block.",
+      "replacement": "one\nline",
+      "severity": "non_blocking",
+      "category": "maintainability"
+    }
+  ]
+}

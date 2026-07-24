@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://github.com/wildcard/gh-code-review/raw/main/schema/v1/review.schema.json",
+  "title": "gh-code-review manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "repository",
+    "pull_request",
+    "expected_head_sha",
+    "comments"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "repository": {
+      "type": "string",
+      "pattern": "^[^/\\s]+/[^/\\s]+$"
+    },
+    "pull_request": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "expected_head_sha": {
+      "type": "string",
+      "minLength": 1
+    },
+    "event": {
+      "enum": [
+        "COMMENT",
+        "APPROVE",
+        "REQUEST_CHANGES"
+      ]
+    },
+    "summary": {
+      "type": "string"
+    },
+    "idempotency_key": {
+      "type": "string",
+      "minLength": 1
+    },
+    "comments": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/comment"
+      }
+    }
+  },
+  "$defs": {
+    "comment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "client_id",
+        "subject",
+        "path",
+        "body"
+      ],
+      "properties": {
+        "client_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "subject": {
+          "enum": [
+            "line",
+            "file"
+          ]
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "body": {
+          "type": "string"
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "side": {
+          "enum": [
+            "LEFT",
+            "RIGHT"
+          ]
+        },
+        "start_line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "start_side": {
+          "enum": [
+            "LEFT",
+            "RIGHT"
+          ]
+        },
+        "replacement": {
+          "type": "string"
+        },
+        "severity": {
+          "enum": [
+            "blocking",
+            "non_blocking",
+            "suggestion",
+            "nit"
+          ]
+        },
+        "category": {
+          "enum": [
+            "correctness",
+            "security",
+            "performance",
+            "reliability",
+            "maintainability",
+            "testing",
+            "API-design",
+            "documentation",
+            "accessibility"
+          ]
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "rule_id": {
+          "type": "string"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "subject": {
+                "const": "line"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "line",
+              "side"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "subject": {
+                "const": "file"
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "line"
+                  ]
+                },
+                {
+                  "required": [
+                    "side"
+                  ]
+                },
+                {
+                  "required": [
+                    "replacement"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

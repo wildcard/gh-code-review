@@ -1,0 +1,6 @@
+/gh-code-review
+/gh-code-review.exe
+/dist/
+__pycache__/
+*.py[cod]
+coverage.out

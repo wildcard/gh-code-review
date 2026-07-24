@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "gh-code-review",
+  "description": "Validated GitHub pull request review tooling for coding agents.",
+  "owner": {
+    "name": "Kobi Kadosh"
+  },
+  "plugins": [
+    {
+      "name": "gh-code-review",
+      "source": "./",
+      "description": "Create coherent inline GitHub reviews with validated anchors and apply-able suggestions.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Kobi Kadosh"
+      },
+      "homepage": "https://github.com/wildcard/gh-code-review",
+      "repository": "https://github.com/wildcard/gh-code-review",
+      "license": "MIT",
+      "category": "development",
+      "tags": [
+        "github",
+        "code-review",
+        "pull-requests",
+        "agents"
+      ],
+      "strict": true
+    }
+  ]
+}

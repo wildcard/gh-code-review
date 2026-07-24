@@ -1,0 +1,34 @@
+[
+  {
+    "filename": "src/service.go",
+    "status": "modified",
+    "additions": 4,
+    "deletions": 2,
+    "changes": 6,
+    "patch": "@@ -10,4 +10,5 @@\n context\n-oldA\n-oldB\n+newA\n+newB\n+newC\n tail\n@@ -30,2 +31,2 @@\n context2\n-oldC\n+newD"
+  },
+  {
+    "filename": "src/new_name.go",
+    "previous_filename": "src/old_name.go",
+    "status": "renamed",
+    "additions": 1,
+    "deletions": 1,
+    "changes": 2,
+    "patch": "@@ -1 +1 @@\n-old\n+new"
+  },
+  {
+    "filename": "src/deleted.go",
+    "status": "removed",
+    "additions": 0,
+    "deletions": 1,
+    "changes": 1,
+    "patch": "@@ -1 +0,0 @@\n-deleted"
+  },
+  {
+    "filename": "assets/logo.png",
+    "status": "modified",
+    "additions": 0,
+    "deletions": 0,
+    "changes": 1
+  }
+]

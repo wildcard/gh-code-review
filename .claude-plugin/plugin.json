@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "gh-code-review",
+  "version": "0.1.0",
+  "description": "Agent guidance for validated, coherent GitHub pull request reviews with inline, range, file, and suggestion threads.",
+  "author": {
+    "name": "Kobi Kadosh"
+  },
+  "homepage": "https://github.com/wildcard/gh-code-review",
+  "repository": "https://github.com/wildcard/gh-code-review",
+  "license": "MIT",
+  "keywords": [
+    "github",
+    "code-review",
+    "agent-skills",
+    "pull-requests"
+  ]
+}

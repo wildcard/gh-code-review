@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0",
+  "repository": "owner/repo",
+  "pull_request": 7,
+  "expected_head_sha": "abc123",
+  "event": "REQUEST_CHANGES",
+  "summary": "The deleted-side defect blocks merging.",
+  "comments": [
+    {
+      "client_id": "deleted-1",
+      "subject": "line",
+      "path": "src/deleted.go",
+      "line": 1,
+      "side": "LEFT",
+      "body": "Removing this guard leaves callers without the required invariant.",
+      "severity": "blocking",
+      "category": "correctness"
+    },
+    {
+      "client_id": "file-1",
+      "subject": "file",
+      "path": "assets/logo.png",
+      "body": "Please document the source and compression settings for this binary asset.",
+      "severity": "non_blocking",
+      "category": "documentation"
+    }
+  ]
+}

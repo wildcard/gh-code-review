@@ -1,0 +1,4 @@
+interface:
+  display_name: "GitHub Code Review"
+  short_description: "Post validated inline GitHub reviews"
+  default_prompt: "Use $gh-code-review to inspect this pull request and submit actionable inline review comments."
