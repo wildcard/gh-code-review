@@ -35,11 +35,16 @@ gh code-review comment suggest <pr> -R owner/repo --review-id ID \
   --path src/a.go --line 12 --side RIGHT --body "..." \
   --replacement-file replacement.txt
 
-gh code-review comment edit -R owner/repo --comment-id ID --body "..."
-gh code-review comment delete -R owner/repo --comment-id ID --confirm
+gh code-review comment edit -R owner/repo --comment-id DATABASE_ID --body "..."
+gh code-review comment edit -R owner/repo --comment-node-id NODE_ID --body "..."
+gh code-review comment delete -R owner/repo --comment-id DATABASE_ID --confirm
+gh code-review comment delete -R owner/repo --comment-node-id NODE_ID --confirm
 ```
 
 For a range, add `--start-line` and `--start-side`.
+Use the node ID returned by `comment add`, `comment suggest`, or `thread show`
+when editing or deleting a comment in a pending review. Use the database ID for
+submitted comments. Specify exactly one identifier.
 
 ## Threads
 

@@ -57,7 +57,9 @@ Do not silently post file comments as independent comments when the requested pr
 
 ## Lifecycle endpoints
 
-- Edit/delete comment: `PATCH|DELETE repos/{owner}/{repo}/pulls/comments/{comment_id}`
+- Edit/delete a submitted comment: `PATCH|DELETE repos/{owner}/{repo}/pulls/comments/{comment_id}`
+- Edit/delete a pending GraphQL-created comment:
+  `updatePullRequestReviewComment` / `deletePullRequestReviewComment` with its node ID
 - Abandon pending review: `DELETE repos/{owner}/{repo}/pulls/{pr}/reviews/{review_id}`
 - Update review summary: `PUT repos/{owner}/{repo}/pulls/{pr}/reviews/{review_id}`
 - Submit pending review: `POST repos/{owner}/{repo}/pulls/{pr}/reviews/{review_id}/events`

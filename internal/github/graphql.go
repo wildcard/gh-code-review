@@ -206,23 +206,101 @@ func (c *Client) AddReviewThread(reviewNodeID string, comment model.Comment) (*T
 				IsResolved  bool   `json:"isResolved"`
 				IsOutdated  bool   `json:"isOutdated"`
 				SubjectType string `json:"subjectType"`
+				Comments    struct {
+					Nodes []struct {
+						ID         string `json:"id"`
+						DatabaseID int64  `json:"databaseId"`
+						Body       string `json:"body"`
+						URL        string `json:"url"`
+						Author     *struct {
+							Login string `json:"login"`
+						} `json:"author"`
+					} `json:"nodes"`
+				} `json:"comments"`
 			} `json:"thread"`
 		} `json:"addPullRequestReviewThread"`
 	}
 	query := `mutation($input:AddPullRequestReviewThreadInput!) {
 	  addPullRequestReviewThread(input:$input) {
-	    thread { id path line startLine diffSide isResolved isOutdated subjectType }
+	    thread {
+	      id path line startLine diffSide isResolved isOutdated subjectType
+	      comments(first:1) { nodes { id databaseId body url author { login } } }
+	    }
 	  }
 	}`
 	if err := c.graphQLDo(query, map[string]interface{}{"input": input}, &response); err != nil {
 		return nil, classifyGraphQLError(err)
 	}
 	node := response.AddPullRequestReviewThread.Thread
-	return &Thread{
+	thread := &Thread{
 		ID: node.ID, Path: node.Path, Line: node.Line, StartLine: node.StartLine,
 		Side: node.DiffSide, IsResolved: node.IsResolved, IsOutdated: node.IsOutdated,
 		Subject: strings.ToLower(node.SubjectType),
+	}
+	for _, comment := range node.Comments.Nodes {
+		author := ""
+		if comment.Author != nil {
+			author = comment.Author.Login
+		}
+		thread.Comments = append(thread.Comments, ThreadComment{
+			ID: comment.ID, DatabaseID: comment.DatabaseID, Body: comment.Body,
+			URL: comment.URL, Author: author,
+		})
+	}
+	return thread, nil
+}
+
+func (c *Client) EditReviewCommentNode(commentNodeID, body string) (*ThreadComment, error) {
+	var response struct {
+		UpdatePullRequestReviewComment struct {
+			Comment struct {
+				ID         string `json:"id"`
+				DatabaseID int64  `json:"databaseId"`
+				Body       string `json:"body"`
+				URL        string `json:"url"`
+				Author     *struct {
+					Login string `json:"login"`
+				} `json:"author"`
+			} `json:"pullRequestReviewComment"`
+		} `json:"updatePullRequestReviewComment"`
+	}
+	query := `mutation($input:UpdatePullRequestReviewCommentInput!) {
+	  updatePullRequestReviewComment(input:$input) {
+	    pullRequestReviewComment { id databaseId body url author { login } }
+	  }
+	}`
+	input := map[string]interface{}{"pullRequestReviewCommentId": commentNodeID, "body": body}
+	if err := c.graphQLDo(query, map[string]interface{}{"input": input}, &response); err != nil {
+		return nil, classifyGraphQLError(err)
+	}
+	node := response.UpdatePullRequestReviewComment.Comment
+	author := ""
+	if node.Author != nil {
+		author = node.Author.Login
+	}
+	return &ThreadComment{
+		ID: node.ID, DatabaseID: node.DatabaseID, Body: node.Body, URL: node.URL, Author: author,
 	}, nil
+}
+
+func (c *Client) DeleteReviewCommentNode(commentNodeID string) error {
+	var response struct {
+		DeletePullRequestReviewComment struct {
+			Comment struct {
+				ID string `json:"id"`
+			} `json:"pullRequestReviewComment"`
+		} `json:"deletePullRequestReviewComment"`
+	}
+	query := `mutation($input:DeletePullRequestReviewCommentInput!) {
+	  deletePullRequestReviewComment(input:$input) {
+	    pullRequestReviewComment { id }
+	  }
+	}`
+	input := map[string]interface{}{"id": commentNodeID}
+	if err := c.graphQLDo(query, map[string]interface{}{"input": input}, &response); err != nil {
+		return classifyGraphQLError(err)
+	}
+	return nil
 }
 
 func (c *Client) ReplyToThread(threadID, body string) (*ThreadComment, error) {

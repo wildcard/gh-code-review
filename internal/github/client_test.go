@@ -102,7 +102,7 @@ func TestAddFileReviewThreadUsesGraphQLFileSubject(t *testing.T) {
 	client := testClient(t, roundTripFunc(func(request *http.Request) (*http.Response, error) {
 		data, _ := io.ReadAll(request.Body)
 		requestBody = string(data)
-		return response(request, 200, `{"data":{"addPullRequestReviewThread":{"thread":{"id":"T_1","path":"a.go","subjectType":"FILE","isResolved":false,"isOutdated":false}}}}`, nil), nil
+		return response(request, 200, `{"data":{"addPullRequestReviewThread":{"thread":{"id":"T_1","path":"a.go","subjectType":"FILE","isResolved":false,"isOutdated":false,"comments":{"nodes":[{"id":"C_1","databaseId":7,"body":"Whole-file design note.","url":"https://x/7","author":{"login":"u"}}]}}}}}`, nil), nil
 	}))
 	thread, err := client.AddReviewThread("R_1", model.Comment{
 		ClientID: "file", Subject: "file", Path: "a.go", Body: "Whole-file design note.",
@@ -110,7 +110,7 @@ func TestAddFileReviewThreadUsesGraphQLFileSubject(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if thread.Subject != "file" || thread.ID != "T_1" {
+	if thread.Subject != "file" || thread.ID != "T_1" || len(thread.Comments) != 1 || thread.Comments[0].ID != "C_1" {
 		t.Fatalf("unexpected thread: %#v", thread)
 	}
 	if !strings.Contains(requestBody, `"subjectType":"FILE"`) || strings.Contains(requestBody, `"line"`) {

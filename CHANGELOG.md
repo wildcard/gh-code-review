@@ -2,6 +2,13 @@
 
 All notable changes are documented here.
 
+## [0.1.1] - 2026-07-24
+
+- Edit and delete GraphQL-created pending review comments by node ID.
+- Return the created comment identifiers directly from `comment add` and
+  `comment suggest`.
+- Preserve numeric REST comment IDs for submitted-review compatibility.
+
 ## [0.1.0] - 2026-07-24
 
 Initial public preview.

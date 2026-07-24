@@ -76,6 +76,18 @@ func TestGraphQLThreadAndViewedLifecycle(t *testing.T) {
 		}
 		_ = json.Unmarshal(data, &payload)
 		switch {
+		case strings.Contains(payload.Query, "updatePullRequestReviewComment"):
+			if !strings.Contains(string(data), `"pullRequestReviewCommentId":"C_1"`) {
+				t.Fatalf("missing update comment node ID: %s", data)
+			}
+			fields = append(fields, "edit")
+			return response(request, 200, `{"data":{"updatePullRequestReviewComment":{"pullRequestReviewComment":{"id":"C_1","databaseId":1,"body":"edited","url":"https://x","author":{"login":"u"}}}}}`, nil), nil
+		case strings.Contains(payload.Query, "deletePullRequestReviewComment"):
+			if !strings.Contains(string(data), `"id":"C_2"`) || strings.Contains(string(data), `"pullRequestReviewCommentId":"C_2"`) {
+				t.Fatalf("wrong delete comment input: %s", data)
+			}
+			fields = append(fields, "delete")
+			return response(request, 200, `{"data":{"deletePullRequestReviewComment":{"pullRequestReviewComment":{"id":"C_2"}}}}`, nil), nil
 		case strings.Contains(payload.Query, "addPullRequestReviewThreadReply"):
 			fields = append(fields, "reply")
 			return response(request, 200, `{"data":{"addPullRequestReviewThreadReply":{"comment":{"id":"C_1","databaseId":1,"body":"reply","url":"https://x","author":{"login":"u"}}}}}`, nil), nil
@@ -96,6 +108,12 @@ func TestGraphQLThreadAndViewedLifecycle(t *testing.T) {
 			return nil, nil
 		}
 	}))
+	if comment, err := client.EditReviewCommentNode("C_1", "edited"); err != nil || comment.Body != "edited" {
+		t.Fatalf("edit: %#v %v", comment, err)
+	}
+	if err := client.DeleteReviewCommentNode("C_2"); err != nil {
+		t.Fatal(err)
+	}
 	if _, err := client.ReplyToThread("T_1", "reply"); err != nil {
 		t.Fatal(err)
 	}
@@ -111,7 +129,7 @@ func TestGraphQLThreadAndViewedLifecycle(t *testing.T) {
 	if err := client.MarkFile("PR_1", "a.go", false); err != nil {
 		t.Fatal(err)
 	}
-	if strings.Join(fields, ",") != "reply,resolve,unresolve,viewed,unviewed" {
+	if strings.Join(fields, ",") != "edit,delete,reply,resolve,unresolve,viewed,unviewed" {
 		t.Fatalf("unexpected operations: %#v", fields)
 	}
 }

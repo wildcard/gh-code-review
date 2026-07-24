@@ -262,7 +262,7 @@ func (a *app) commentAddCommand(suggestion bool) *cobra.Command {
 }
 
 func (a *app) commentEditCommand() *cobra.Command {
-	var repo, body, bodyFile string
+	var repo, body, bodyFile, commentNodeID string
 	var commentID int64
 	command := &cobra.Command{
 		Use: "edit", Short: "Edit an existing review comment", Args: cobra.NoArgs,
@@ -271,7 +271,7 @@ func (a *app) commentEditCommand() *cobra.Command {
 				a.finish("comment.edit", repo, 0, nil, output.NewError(output.ExitValidation, "REPOSITORY", "--repo is required", false, nil))
 				return
 			}
-			if err := positiveID(commentID, "comment-id"); err != nil {
+			if err := validateCommentReference(commentID, commentNodeID); err != nil {
 				a.finish("comment.edit", repo, 0, nil, err)
 				return
 			}
@@ -283,20 +283,25 @@ func (a *app) commentEditCommand() *cobra.Command {
 			client, err := a.client()
 			var result interface{}
 			if err == nil {
-				result, err = client.EditReviewComment(repo, commentID, text)
+				if commentNodeID != "" {
+					result, err = client.EditReviewCommentNode(commentNodeID, text)
+				} else {
+					result, err = client.EditReviewComment(repo, commentID, text)
+				}
 			}
 			a.finish("comment.edit", repo, 0, result, err)
 		},
 	}
 	command.Flags().StringVarP(&repo, "repo", "R", "", "Repository in owner/name form")
-	command.Flags().Int64Var(&commentID, "comment-id", 0, "Review comment database ID")
+	command.Flags().Int64Var(&commentID, "comment-id", 0, "Submitted review comment database ID")
+	command.Flags().StringVar(&commentNodeID, "comment-node-id", "", "Review comment node ID, including pending comments")
 	command.Flags().StringVar(&body, "body", "", "New comment body")
 	command.Flags().StringVar(&bodyFile, "body-file", "", "Read new body from a file")
 	return command
 }
 
 func (a *app) commentDeleteCommand() *cobra.Command {
-	var repo string
+	var repo, commentNodeID string
 	var commentID int64
 	var confirm bool
 	command := &cobra.Command{
@@ -310,21 +315,44 @@ func (a *app) commentDeleteCommand() *cobra.Command {
 				a.finish("comment.delete", repo, 0, nil, output.NewError(output.ExitValidation, "CONFIRMATION_REQUIRED", "--confirm is required", false, nil))
 				return
 			}
-			if err := positiveID(commentID, "comment-id"); err != nil {
+			if err := validateCommentReference(commentID, commentNodeID); err != nil {
 				a.finish("comment.delete", repo, 0, nil, err)
 				return
 			}
 			client, err := a.client()
 			if err == nil {
-				err = client.DeleteReviewComment(repo, commentID)
+				if commentNodeID != "" {
+					err = client.DeleteReviewCommentNode(commentNodeID)
+				} else {
+					err = client.DeleteReviewComment(repo, commentID)
+				}
 			}
-			a.finish("comment.delete", repo, 0, map[string]interface{}{"comment_id": commentID, "deleted": err == nil}, err)
+			result := map[string]interface{}{"deleted": err == nil}
+			if commentNodeID != "" {
+				result["comment_node_id"] = commentNodeID
+			} else {
+				result["comment_id"] = commentID
+			}
+			a.finish("comment.delete", repo, 0, result, err)
 		},
 	}
 	command.Flags().StringVarP(&repo, "repo", "R", "", "Repository in owner/name form")
-	command.Flags().Int64Var(&commentID, "comment-id", 0, "Review comment database ID")
+	command.Flags().Int64Var(&commentID, "comment-id", 0, "Submitted review comment database ID")
+	command.Flags().StringVar(&commentNodeID, "comment-node-id", "", "Review comment node ID, including pending comments")
 	command.Flags().BoolVar(&confirm, "confirm", false, "Confirm deletion")
 	return command
+}
+
+func validateCommentReference(commentID int64, commentNodeID string) error {
+	if commentID > 0 && commentNodeID != "" {
+		return output.NewError(output.ExitValidation, "COMMENT_REFERENCE",
+			"use only one of --comment-id or --comment-node-id", false, nil)
+	}
+	if commentID > 0 || commentNodeID != "" {
+		return nil
+	}
+	return output.NewError(output.ExitValidation, "COMMENT_REFERENCE",
+		"one of --comment-id or --comment-node-id is required", false, nil)
 }
 
 func (a *app) threadCommand() *cobra.Command {
