@@ -12,19 +12,22 @@ submission.
 
 ## Live evidence
 
-The exact PR and review URLs are recorded under `mixed-review` in
+Recorded fixture: [PR #5](https://github.com/wildcard/gh-code-review/pull/5).
+Both threads belong to
+[review 4777656885](https://github.com/wildcard/gh-code-review/pull/5#pullrequestreview-4777656885).
+The machine-verifiable receipt is recorded under `mixed-review` in
 [`demo/evidence.json`](../../demo/evidence.json).
 
 ## Commands used
 
 ```bash
-gh code-review inspect PR_NUMBER \
+gh code-review inspect 5 \
   -R wildcard/gh-code-review \
   --include bodies
 
 python3 scripts/demo_lab.py render \
   --scenario mixed-review \
-  --pull-request PR_NUMBER \
+  --pull-request 5 \
   --output /tmp/gh-code-review-mixed.json
 
 gh code-review validate \
@@ -38,8 +41,8 @@ gh code-review submit \
   --input /tmp/gh-code-review-mixed.json
 ```
 
-The dry-run receipt must select `graphql-pending`; the submitted review must
-contain both subjects and no issue-level PR comment.
+The dry-run receipt selected `graphql-pending`. The submitted review contains
+one `LINE` thread and one true `FILE` thread, with no issue-level PR comment.
 
 ## Agent instruction
 

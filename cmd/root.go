@@ -12,7 +12,7 @@ import (
 	"github.com/wildcard/gh-code-review/internal/output"
 )
 
-var version = "0.1.1"
+var version = "0.2.0"
 
 type app struct {
 	exitCode int

@@ -10,7 +10,7 @@
     {
       "client_id": "restore-error-guard",
       "subject": "line",
-      "path": "demo-prs/core/request_path.go",
+      "path": "testdata/demo-prs/core/request_path.go",
       "start_line": 4,
       "start_side": "RIGHT",
       "line": 5,

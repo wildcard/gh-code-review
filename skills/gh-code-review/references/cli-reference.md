@@ -12,6 +12,10 @@ gh code-review submit --input review.json [--dry-run] [--derive-event]
 gh code-review capabilities
 ```
 
+Use `--input -` with `validate` or `submit` to read a JSON or YAML manifest
+from standard input. This lets an agent stream a generated manifest without an
+intermediate file.
+
 ## Pending reviews
 
 ```text

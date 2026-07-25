@@ -1,4 +1,5 @@
 import importlib.util
+import io
 import json
 import pathlib
 import subprocess
@@ -61,6 +62,33 @@ class FallbackParityTests(unittest.TestCase):
         self.assertEqual("1.0", value["schema_version"])
         self.assertTrue(value["ok"])
         self.assertEqual("validate", value["operation"])
+
+    def test_manifest_can_be_read_from_stdin(self):
+        content = json.dumps(self.fixture("review_line.json"))
+        with mock.patch.object(fallback.sys, "stdin", io.StringIO(content)):
+            manifest = fallback.load_manifest("-")
+        self.assertEqual(7, manifest["pull_request"])
+
+    def test_compact_pull_request_drops_low_signal_api_metadata(self):
+        raw = {
+            "number": 7,
+            "node_id": "PR_1",
+            "title": "demo",
+            "state": "open",
+            "draft": False,
+            "html_url": "https://example.test/pull/7",
+            "head": {"sha": "head", "ref": "feature", "repo": {"full_name": "o/r"}},
+            "base": {"sha": "base", "ref": "main", "repo": {"full_name": "o/r"}},
+            "user": {"login": "author", "avatar_url": "https://example.test/avatar"},
+            "requested_reviewers": [{"login": "reviewer"}],
+            "body": "large body",
+        }
+        compact = fallback.compact_pull_request(raw)
+        self.assertEqual("head", compact["head"]["sha"])
+        self.assertEqual({"login": "author"}, compact["user"])
+        self.assertNotIn("requested_reviewers", compact)
+        self.assertNotIn("body", compact)
+        self.assertNotIn("repo", compact["head"])
 
     def test_secondary_rate_limit_retries(self):
         responses = [

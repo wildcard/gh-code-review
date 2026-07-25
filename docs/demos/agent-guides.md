@@ -17,12 +17,17 @@ Prompt:
 
 ```text
 Use $gh-code-review to inspect PR_URL, review only the changed code, and post
-one formal COMMENT review with the smallest honest anchors. Do not use a flat
-PR comment. Verify the resulting review and report its URL.
+one formal COMMENT review with the smallest honest anchors. Do not modify
+files. Do not use a flat PR comment. Verify the resulting review and report
+its URL.
 ```
 
-The exact public PR, review URL, prompt, and sanitized agent result are
-recorded under `codex-skill` in
+The recorded run used the prompt above with
+[PR #8](https://github.com/wildcard/gh-code-review/pull/8), an ephemeral Codex
+session, and the installed user-scope skill. It created
+[review 4777673736](https://github.com/wildcard/gh-code-review/pull/8#pullrequestreview-4777673736):
+one current line thread, `COMMENTED`, no file edits, and zero flat PR comments.
+The exact prompt and sanitized result are recorded under `codex-skill` in
 [`demo/evidence.json`](../../demo/evidence.json).
 
 ## Claude Code
@@ -39,11 +44,17 @@ Prompt:
 ```text
 Use the gh-code-review skill to inspect PR_URL, review only the changed code,
 and post one formal COMMENT review with the smallest honest anchors. Do not
-use a flat PR comment. Verify the resulting review and report its URL.
+modify files. Do not use a flat PR comment. Verify the resulting review and
+report its URL.
 ```
 
-The exact public PR, review URL, prompt, model, and sanitized result are
-recorded under `claude-plugin` in
+The recorded run used the prompt above with
+[PR #9](https://github.com/wildcard/gh-code-review/pull/9), Claude Sonnet, the
+installed marketplace plugin, and a disposable checkout. It created
+[review 4777689847](https://github.com/wildcard/gh-code-review/pull/9#pullrequestreview-4777689847):
+one current line thread, `COMMENTED`, no file edits, and zero flat PR comments.
+The exact prompt, model, and sanitized result are recorded under
+`claude-plugin` in
 [`demo/evidence.json`](../../demo/evidence.json).
 
 ## Cursor, Copilot CLI, Gemini CLI, and other skill clients

@@ -42,7 +42,7 @@
       "id": "core-transaction",
       "title": "Core review transaction",
       "branch": "demo/core-transaction-v0.2",
-      "target_path": "demo-prs/core/request_path.go",
+      "target_path": "testdata/demo-prs/core/request_path.go",
       "proposed_path": "demo/proposals/core/request_path.go.txt",
       "expected_path": "demo/expected/core/request_path.go.txt",
       "features": [
@@ -61,7 +61,7 @@
       "id": "mixed-review",
       "title": "Mixed line and file review",
       "branch": "demo/mixed-review-v0.2",
-      "target_path": "demo-prs/mixed/cache.go",
+      "target_path": "testdata/demo-prs/mixed/cache.go",
       "proposed_path": "demo/proposals/mixed/cache.go.txt",
       "expected_path": "demo/expected/mixed/cache.go.txt",
       "features": [
@@ -133,7 +133,7 @@
       "guide": "docs/demos/agent-guides.md",
       "agent": {
         "name": "Codex",
-        "prompt": "Use $gh-code-review to inspect PR {pr_url}, review only the changed code, and post one formal COMMENT review with the smallest honest anchors. Do not use a flat PR comment. Verify the resulting review and report its URL."
+        "prompt": "Use $gh-code-review to inspect PR {pr_url}, review only the changed code, and post one formal COMMENT review with the smallest honest anchors. Do not modify files. Do not use a flat PR comment. Verify the resulting review and report its URL."
       }
     },
     {
@@ -149,7 +149,7 @@
       "guide": "docs/demos/agent-guides.md",
       "agent": {
         "name": "Claude Code",
-        "prompt": "Use the gh-code-review skill to inspect PR {pr_url}, review only the changed code, and post one formal COMMENT review with the smallest honest anchors. Do not use a flat PR comment. Verify the resulting review and report its URL."
+        "prompt": "Use the gh-code-review skill to inspect PR {pr_url}, review only the changed code, and post one formal COMMENT review with the smallest honest anchors. Do not modify files. Do not use a flat PR comment. Verify the resulting review and report its URL."
       }
     }
   ]

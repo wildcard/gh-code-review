@@ -1,25 +1,28 @@
 # Demo: core review transaction
 
 This scenario starts with an ignored error in
-`demo-prs/core/request_path.go`. One multiline suggestion restores the guard
+`testdata/demo-prs/core/request_path.go`. One multiline suggestion restores the guard
 and replaces two selected lines with four lines.
 
 ## Live evidence
 
-The exact PR and review URLs are recorded under `core-transaction` in
+Recorded fixture: [PR #4](https://github.com/wildcard/gh-code-review/pull/4).
+The submitted review is
+[review 4777655056](https://github.com/wildcard/gh-code-review/pull/4#pullrequestreview-4777655056).
+The machine-verifiable receipt is recorded under `core-transaction` in
 [`demo/evidence.json`](../../demo/evidence.json).
 
 ## Commands used
 
 ```bash
 gh code-review capabilities
-gh code-review inspect PR_NUMBER \
+gh code-review inspect 4 \
   -R wildcard/gh-code-review \
   --unresolved
 
 python3 scripts/demo_lab.py render \
   --scenario core-transaction \
-  --pull-request PR_NUMBER \
+  --pull-request 4 \
   --output /tmp/gh-code-review-core.json
 
 gh code-review validate \
@@ -33,9 +36,10 @@ gh code-review submit \
   --input /tmp/gh-code-review-core.json
 ```
 
-The final submit is run a second time with the same `idempotency_key`. The
-receipt must report an idempotent replay and GitHub must still contain exactly
-one matching review thread.
+The dry run selected `rest-batch`. Running the final submit a second time with
+the same `idempotency_key` returned `transport: journal` and
+`idempotent_replay: true`. GitHub still contained exactly one matching review
+thread and zero flat PR comments.
 
 ## Agent instruction
 

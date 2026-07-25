@@ -224,7 +224,8 @@ def command_render(args: argparse.Namespace) -> None:
     value = catalog()
     repository = value["repository"]
     scenario = find_scenario(args.scenario)
-    template_path = ROOT / "demo" / "manifests" / f"{scenario['id']}.json"
+    template_name = args.template or scenario["id"]
+    template_path = ROOT / "demo" / "manifests" / f"{template_name}.json"
     if not template_path.is_file():
         raise DemoError(f"scenario {scenario['id']} has no manifest template")
     pull = gh_api("GET", f"repos/{repository}/pulls/{args.pull_request}")
@@ -300,6 +301,11 @@ def verify_live_scenario(
     pull = gh_api("GET", f"repos/{repository}/pulls/{number}")
     if pull["html_url"] != evidence["pull_url"]:
         issues.append(f"{scenario_id}: pull URL changed")
+    if pull["head"]["sha"] != evidence.get("head_sha"):
+        issues.append(
+            f"{scenario_id}: expected head {evidence.get('head_sha')}, "
+            f"got {pull['head']['sha']}"
+        )
     expected_state = evidence.get("pull_state")
     if expected_state and pull["state"].upper() != expected_state:
         issues.append(
@@ -323,11 +329,86 @@ def verify_live_scenario(
                 f"{scenario_id}: review {expected['id']} expected "
                 f"{expected['state']}, got {review['state']}"
             )
+        if review["html_url"] != expected["url"]:
+            issues.append(f"{scenario_id}: review {expected['id']} URL changed")
     comments = gh_api("GET", f"repos/{repository}/pulls/{number}/comments")
     comment_ids = {comment["id"] for comment in comments}
     for comment_id in evidence.get("review_comment_ids", []):
         if comment_id not in comment_ids:
             issues.append(f"{scenario_id}: missing review comment {comment_id}")
+    owner, name = repository.split("/", 1)
+    thread_data = gh_api(
+        "POST",
+        "graphql",
+        {
+            "query": """
+query($owner:String!, $name:String!, $number:Int!) {
+  repository(owner:$owner, name:$name) {
+    pullRequest(number:$number) {
+      reviewThreads(first:100) {
+        nodes {
+          id isResolved isOutdated subjectType
+          comments(first:100) { nodes { id databaseId } }
+        }
+      }
+    }
+  }
+}""",
+            "variables": {"owner": owner, "name": name, "number": number},
+        },
+    )
+    threads = thread_data["data"]["repository"]["pullRequest"]["reviewThreads"]["nodes"]
+    thread_by_id = {thread["id"]: thread for thread in threads}
+    comment_node_ids = {
+        comment["id"]
+        for thread in threads
+        for comment in thread["comments"]["nodes"]
+    }
+    results = evidence.get("results", {})
+    recorded_threads = {
+        key: value
+        for key, value in results.items()
+        if key.endswith("thread_id") and isinstance(value, str)
+    }
+    for key, thread_id in recorded_threads.items():
+        if thread_id not in thread_by_id:
+            issues.append(f"{scenario_id}: missing {key} {thread_id}")
+    recorded_comment_nodes = {
+        key: value
+        for key, value in results.items()
+        if key.endswith("comment_node_id") and isinstance(value, str)
+    }
+    for key, comment_node_id in recorded_comment_nodes.items():
+        if comment_node_id not in comment_node_ids:
+            issues.append(f"{scenario_id}: missing {key} {comment_node_id}")
+    primary_thread = thread_by_id.get(results.get("thread_id", ""))
+    if primary_thread:
+        if "thread_current" in results and (
+            not primary_thread["isOutdated"]
+        ) != results["thread_current"]:
+            issues.append(f"{scenario_id}: primary thread current-state changed")
+        if (
+            "thread_resolved" in results
+            and primary_thread["isResolved"] != results["thread_resolved"]
+        ):
+            issues.append(f"{scenario_id}: primary thread resolved-state changed")
+    line_thread = thread_by_id.get(results.get("line_thread_id", ""))
+    if line_thread and "line_thread_final_resolved" in results:
+        if line_thread["isResolved"] != results["line_thread_final_resolved"]:
+            issues.append(f"{scenario_id}: line thread resolved-state changed")
+    if "subject_types" in results:
+        actual_subjects = sorted(
+            {
+                thread_by_id[thread_id]["subjectType"]
+                for thread_id in recorded_threads.values()
+                if thread_id in thread_by_id
+            }
+        )
+        if actual_subjects != sorted(results["subject_types"]):
+            issues.append(
+                f"{scenario_id}: expected subjects {sorted(results['subject_types'])}, "
+                f"got {actual_subjects}"
+            )
     return issues
 
 
@@ -393,6 +474,10 @@ def build_parser() -> argparse.ArgumentParser:
     render_parser.add_argument("--scenario", required=True)
     render_parser.add_argument("--pull-request", type=int, required=True)
     render_parser.add_argument("--output", required=True)
+    render_parser.add_argument(
+        "--template",
+        help="Use a different manifest template, such as self-approval",
+    )
     render_parser.set_defaults(handler=command_render)
 
     verify_parser = subparsers.add_parser(

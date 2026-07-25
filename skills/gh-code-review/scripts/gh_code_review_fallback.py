@@ -532,6 +532,89 @@ def live_validate(manifest, derive=False, resume_review=0):
     }
 
 
+def compact_pull_request(pull):
+    return {
+        "number": pull["number"],
+        "node_id": pull.get("node_id", ""),
+        "title": pull.get("title", ""),
+        "state": pull.get("state", ""),
+        "draft": pull.get("draft", False),
+        "html_url": pull.get("html_url", ""),
+        "head": {
+            "sha": pull["head"]["sha"],
+            "ref": pull["head"].get("ref", ""),
+        },
+        "base": {
+            "sha": pull["base"]["sha"],
+            "ref": pull["base"].get("ref", ""),
+        },
+        "user": {"login": (pull.get("user") or {}).get("login", "")},
+    }
+
+
+def compact_review(review):
+    return {
+        "id": review["id"],
+        "node_id": review.get("node_id", ""),
+        "state": review.get("state", ""),
+        "body": review.get("body", ""),
+        "commit_id": review.get("commit_id", ""),
+        "html_url": review.get("html_url", ""),
+        "submitted_at": review.get("submitted_at", ""),
+        "user": {"login": (review.get("user") or {}).get("login", "")},
+    }
+
+
+def compact_review_comment(comment):
+    return {
+        "id": comment["id"],
+        "node_id": comment.get("node_id", ""),
+        "pull_request_review_id": comment.get("pull_request_review_id", 0),
+        "path": comment.get("path", ""),
+        "body": comment.get("body", ""),
+        "commit_id": comment.get("commit_id", ""),
+        "subject_type": comment.get("subject_type", ""),
+        "line": comment.get("line"),
+        "side": comment.get("side", ""),
+        "start_line": comment.get("start_line"),
+        "start_side": comment.get("start_side", ""),
+        "in_reply_to_id": comment.get("in_reply_to_id"),
+        "html_url": comment.get("html_url", ""),
+        "position": comment.get("position"),
+        "user": {"login": (comment.get("user") or {}).get("login", "")},
+    }
+
+
+def compact_checks(checks):
+    return {
+        "total_count": checks.get("total_count", 0),
+        "check_runs": [
+            {
+                "id": check.get("id", 0),
+                "name": check.get("name", ""),
+                "status": check.get("status", ""),
+                "conclusion": check.get("conclusion", ""),
+                "html_url": check.get("html_url", ""),
+            }
+            for check in checks.get("check_runs", [])
+        ],
+    }
+
+
+def compact_status(status):
+    return {
+        "state": status.get("state", ""),
+        "statuses": [
+            {
+                "context": value.get("context", ""),
+                "state": value.get("state", ""),
+                "target_url": value.get("target_url", ""),
+            }
+            for value in status.get("statuses", [])
+        ],
+    }
+
+
 def inspect(args):
     repository = args.repo
     pull_request = args.pull_request
@@ -550,20 +633,21 @@ def inspect(args):
             for comment in thread["comments"]:
                 comment["body"] = ""
     return {
-        "pull_request": pull,
+        "pull_request": compact_pull_request(pull),
         "files": files,
         "commentable_ranges": compact_ranges(files, locations),
-        "reviews": reviews,
-        "review_comments": comments,
+        "reviews": [compact_review(value) for value in reviews],
+        "review_comments": [compact_review_comment(value) for value in comments],
         "threads": threads,
-        "checks": checks,
-        "commit_status": status,
+        "checks": compact_checks(checks),
+        "commit_status": compact_status(status),
     }
 
 
 def load_manifest(path):
     try:
-        return json.loads(Path(path).read_text(encoding="utf-8"))
+        content = sys.stdin.read() if path == "-" else Path(path).read_text(encoding="utf-8")
+        return json.loads(content)
     except (OSError, json.JSONDecodeError) as error:
         raise ToolError(EXIT_VALIDATION, "MANIFEST", f"read JSON manifest: {error}")
 

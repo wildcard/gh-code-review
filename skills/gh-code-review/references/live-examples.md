@@ -14,8 +14,8 @@ https://github.com/wildcard/gh-code-review/blob/main/demo/evidence.json
 ```text
 Use $gh-code-review to inspect PR_URL, review only the changed code, and post
 one formal COMMENT review with the smallest honest anchors. Use apply-able
-suggestions when the correction is exact. Do not use a flat PR comment.
-Verify the resulting review and report its URL.
+suggestions when the correction is exact. Do not modify files. Do not use a
+flat PR comment. Verify the resulting review and report its URL.
 ```
 
 Replace `$gh-code-review` with `the gh-code-review skill` for clients without

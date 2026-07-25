@@ -134,6 +134,9 @@ gh code-review validate --input review.json
 gh code-review submit --input review.json --dry-run
 ```
 
+Both commands also accept `--input -`, auto-detecting JSON or YAML from standard
+input. Agents can stream a generated manifest without creating a temporary file.
+
 Validation is read-only. It rejects stale heads, invalid sides/ranges,
 cross-hunk ranges, malformed suggestions, duplicate findings, pending-review
 conflicts, unsupported host behavior, and self-approval.
