@@ -226,7 +226,7 @@ func (a *app) capabilitiesCommand() *cobra.Command {
 				"version": version,
 			}
 			if !githubDotCom {
-				result["warning"] = fmt.Sprintf("%s is not a fully supported v0.1 host; mutations return structured capability errors when unavailable", client.Host)
+				result["warning"] = fmt.Sprintf("%s is not a fully supported preview host; mutations return structured capability errors when unavailable", client.Host)
 			}
 			a.finish("capabilities", "", 0, result, nil)
 		},

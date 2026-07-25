@@ -2,6 +2,12 @@
 
 All notable changes are documented here.
 
+## [0.2.1] - 2026-07-24
+
+- Make public-preview host messaging release-neutral.
+- Correct the live-lab reproduction guide to describe disposable PRs as
+  intentionally not for merging.
+
 ## [0.2.0] - 2026-07-24
 
 - Add an executable public review lab with six sanitized PR fixtures, exact

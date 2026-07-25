@@ -161,7 +161,7 @@ python3 scripts/demo_lab.py create --scenario core-transaction
 ```
 
 The second command refuses to write until `--confirm` is supplied. The
-controller creates one branch and one intentionally unmergeable dummy PR,
+controller creates one branch and one dummy PR marked as not for merging,
 using the sanitized proposal under `demo/proposals/`.
 
 ```bash
