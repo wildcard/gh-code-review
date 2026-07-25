@@ -11,7 +11,8 @@ It has two deliberately separate layers:
 - `gh code-review` is a deterministic GitHub CLI extension for inspection, validation, submission, retry safety, and review-thread lifecycle operations. It does not invoke a model or analyze code.
 - The portable `gh-code-review` Agent Skill teaches coding agents how to review changed code, avoid duplicate threads, choose honest anchors, and use the extension or its `gh api` fallback.
 
-This is a public preview. GitHub.com is the supported v0.1 host; GitHub Enterprise Server reports capabilities explicitly.
+This is a public preview. GitHub.com is the fully supported host; GitHub
+Enterprise Server reports capabilities explicitly.
 
 ## Install
 
