@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -83,12 +84,33 @@ func (c Comment) APIComment() APIComment {
 }
 
 func LoadManifest(path string) (*Manifest, error) {
-	data, err := os.ReadFile(path)
+	var (
+		data []byte
+		err  error
+	)
+	if path == "-" {
+		data, err = io.ReadAll(os.Stdin)
+	} else {
+		data, err = os.ReadFile(path)
+	}
 	if err != nil {
 		return nil, fmt.Errorf("read manifest: %w", err)
 	}
+	return DecodeManifest(data, path)
+}
+
+func DecodeManifest(data []byte, source string) (*Manifest, error) {
 	var manifest Manifest
-	switch strings.ToLower(filepath.Ext(path)) {
+	format := strings.ToLower(filepath.Ext(source))
+	if source == "-" {
+		trimmed := bytes.TrimSpace(data)
+		if len(trimmed) > 0 && (trimmed[0] == '{' || trimmed[0] == '[') {
+			format = ".json"
+		} else {
+			format = ".yaml"
+		}
+	}
+	switch format {
 	case ".yaml", ".yml":
 		dec := yaml.NewDecoder(bytes.NewReader(data))
 		dec.KnownFields(true)

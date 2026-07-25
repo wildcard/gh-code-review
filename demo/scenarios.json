@@ -1,0 +1,156 @@
+{
+  "schema_version": "1.0",
+  "repository": "wildcard/gh-code-review",
+  "required_features": [
+    "capabilities",
+    "inspect",
+    "validate",
+    "multiline-range",
+    "submit-rest-batch",
+    "submit-graphql-mixed",
+    "idempotent-replay",
+    "pending-start",
+    "pending-show",
+    "pending-abandon",
+    "comment-add-line",
+    "comment-add-file",
+    "comment-suggest",
+    "comment-edit-node",
+    "comment-edit-database",
+    "comment-delete-node",
+    "comment-delete-database",
+    "thread-list",
+    "thread-show",
+    "thread-reply",
+    "thread-resolve",
+    "thread-unresolve",
+    "review-list",
+    "review-show",
+    "review-edit",
+    "review-submit",
+    "review-dismiss-safety",
+    "file-viewed",
+    "file-unviewed",
+    "head-change-protection",
+    "self-approval-protection",
+    "python-fallback",
+    "codex-skill",
+    "claude-plugin"
+  ],
+  "scenarios": [
+    {
+      "id": "core-transaction",
+      "title": "Core review transaction",
+      "branch": "demo/core-transaction-v0.2",
+      "target_path": "testdata/demo-prs/core/request_path.go",
+      "proposed_path": "demo/proposals/core/request_path.go.txt",
+      "expected_path": "demo/expected/core/request_path.go.txt",
+      "features": [
+        "capabilities",
+        "inspect",
+        "validate",
+        "multiline-range",
+        "submit-rest-batch",
+        "idempotent-replay",
+        "review-list",
+        "review-show"
+      ],
+      "guide": "docs/demos/core-transaction.md"
+    },
+    {
+      "id": "mixed-review",
+      "title": "Mixed line and file review",
+      "branch": "demo/mixed-review-v0.2",
+      "target_path": "testdata/demo-prs/mixed/cache.go",
+      "proposed_path": "demo/proposals/mixed/cache.go.txt",
+      "expected_path": "demo/expected/mixed/cache.go.txt",
+      "features": [
+        "submit-graphql-mixed",
+        "comment-add-line",
+        "comment-add-file"
+      ],
+      "guide": "docs/demos/mixed-review.md"
+    },
+    {
+      "id": "review-lifecycle",
+      "title": "Pending review and thread lifecycle",
+      "branch": "demo/review-lifecycle-v0.2",
+      "target_path": "demo-prs/lifecycle/service.conf",
+      "proposed_path": "demo/proposals/lifecycle/service.conf",
+      "expected_path": "demo/expected/lifecycle/service.conf",
+      "features": [
+        "pending-start",
+        "pending-show",
+        "pending-abandon",
+        "comment-add-line",
+        "comment-add-file",
+        "comment-suggest",
+        "comment-edit-node",
+        "comment-edit-database",
+        "comment-delete-node",
+        "comment-delete-database",
+        "thread-list",
+        "thread-show",
+        "thread-reply",
+        "thread-resolve",
+        "thread-unresolve",
+        "review-list",
+        "review-show",
+        "review-edit",
+        "review-submit",
+        "file-viewed",
+        "file-unviewed"
+      ],
+      "guide": "docs/demos/review-lifecycle.md"
+    },
+    {
+      "id": "guardrails-fallback",
+      "title": "Guardrails and direct API fallback",
+      "branch": "demo/guardrails-fallback-v0.2",
+      "target_path": "demo-prs/guardrails/policy.conf",
+      "proposed_path": "demo/proposals/guardrails/policy.conf",
+      "followup_path": "demo/proposals/guardrails/policy-followup.conf",
+      "expected_path": "demo/expected/guardrails/policy.conf",
+      "features": [
+        "validate",
+        "review-dismiss-safety",
+        "head-change-protection",
+        "self-approval-protection",
+        "python-fallback"
+      ],
+      "guide": "docs/demos/guardrails-fallback.md"
+    },
+    {
+      "id": "codex-skill",
+      "title": "Codex skill-guided review",
+      "branch": "demo/codex-skill-v0.2",
+      "target_path": "demo-prs/agents/codex-settings.json",
+      "proposed_path": "demo/proposals/agents/codex-settings.json",
+      "expected_path": "demo/expected/agents/codex-settings.json",
+      "features": [
+        "codex-skill"
+      ],
+      "guide": "docs/demos/agent-guides.md",
+      "agent": {
+        "name": "Codex",
+        "prompt": "Use $gh-code-review to inspect PR {pr_url}, review only the changed code, and post one formal COMMENT review with the smallest honest anchors. Do not modify files. Do not use a flat PR comment. Verify the resulting review and report its URL."
+      }
+    },
+    {
+      "id": "claude-plugin",
+      "title": "Claude plugin-guided review",
+      "branch": "demo/claude-plugin-v0.2",
+      "target_path": "demo-prs/agents/claude-settings.yaml",
+      "proposed_path": "demo/proposals/agents/claude-settings.yaml",
+      "expected_path": "demo/expected/agents/claude-settings.yaml",
+      "features": [
+        "claude-plugin"
+      ],
+      "guide": "docs/demos/agent-guides.md",
+      "agent": {
+        "name": "Claude Code",
+        "prompt": "Use the gh-code-review skill to inspect PR {pr_url}, review only the changed code, and post one formal COMMENT review with the smallest honest anchors. Do not modify files. Do not use a flat PR comment. Verify the resulting review and report its URL."
+      }
+    }
+  ]
+}

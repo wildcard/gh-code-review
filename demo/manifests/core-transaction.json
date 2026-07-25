@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "repository": "__REPOSITORY__",
+  "pull_request": 1,
+  "expected_head_sha": "__HEAD_SHA__",
+  "event": "COMMENT",
+  "summary": "The response path needs to preserve its error guard.",
+  "idempotency_key": "demo-core-__HEAD_SHA__",
+  "comments": [
+    {
+      "client_id": "restore-error-guard",
+      "subject": "line",
+      "path": "testdata/demo-prs/core/request_path.go",
+      "start_line": 4,
+      "start_side": "RIGHT",
+      "line": 5,
+      "side": "RIGHT",
+      "body": "The error result is ignored, so callers can receive a body from a failed request.",
+      "replacement": "if err != nil {\n\treturn \"\"\n}\nreturn string(body)",
+      "severity": "blocking",
+      "category": "correctness",
+      "confidence": 0.99,
+      "rule_id": "guard-before-result",
+      "evidence": [
+        "The proposed function never reads err."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0",
+  "repository": "__REPOSITORY__",
+  "pull_request": 1,
+  "expected_head_sha": "__HEAD_SHA__",
+  "event": "COMMENT",
+  "summary": "The cache constructor and concurrency contract need attention.",
+  "idempotency_key": "demo-mixed-__HEAD_SHA__",
+  "comments": [
+    {
+      "client_id": "initialize-cache-map",
+      "subject": "line",
+      "path": "testdata/demo-prs/mixed/cache.go",
+      "line": 8,
+      "side": "RIGHT",
+      "body": "Put writes to this map immediately, so returning an uninitialized map makes the first write panic.",
+      "replacement": "return &Cache{values: make(map[string]string)}",
+      "severity": "blocking",
+      "category": "correctness",
+      "confidence": 0.99
+    },
+    {
+      "client_id": "document-cache-concurrency",
+      "subject": "file",
+      "path": "testdata/demo-prs/mixed/cache.go",
+      "body": "Please define whether Cache is safe for concurrent use; the file currently exposes an unsynchronized map without documenting a single-owner constraint.",
+      "severity": "non_blocking",
+      "category": "documentation",
+      "confidence": 0.94
+    }
+  ]
+}

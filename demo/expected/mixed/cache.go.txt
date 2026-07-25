@@ -1,0 +1,13 @@
+package demo
+
+type Cache struct {
+	values map[string]string
+}
+
+func newCache() *Cache {
+	return &Cache{values: make(map[string]string)}
+}
+
+func (c *Cache) Put(key, value string) {
+	c.values[key] = value
+}

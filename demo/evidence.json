@@ -1,0 +1,262 @@
+{
+  "schema_version": "1.0",
+  "repository": "wildcard/gh-code-review",
+  "release": "v0.2.0",
+  "recorded_at": "2026-07-25T00:20:44Z",
+  "scenarios": {
+    "core-transaction": {
+      "pull_request": 4,
+      "pull_url": "https://github.com/wildcard/gh-code-review/pull/4",
+      "pull_state": "CLOSED",
+      "head_sha": "a4f85eccf93f72fd65ef01aa0c5c7ec7ab08d67d",
+      "flat_pr_comments": 0,
+      "reviews": [
+        {
+          "id": 4777655056,
+          "state": "COMMENTED",
+          "url": "https://github.com/wildcard/gh-code-review/pull/4#pullrequestreview-4777655056"
+        }
+      ],
+      "review_comment_ids": [
+        3648817913
+      ],
+      "commands": [
+        "gh code-review capabilities",
+        "gh code-review inspect 4 -R wildcard/gh-code-review --unresolved",
+        "python3 scripts/demo_lab.py render --scenario core-transaction --pull-request 4 --output /tmp/gh-code-review-core.json",
+        "gh code-review validate --input /tmp/gh-code-review-core.json",
+        "gh code-review submit --input /tmp/gh-code-review-core.json --dry-run",
+        "gh code-review submit --input /tmp/gh-code-review-core.json",
+        "gh code-review submit --input /tmp/gh-code-review-core.json"
+      ],
+      "results": {
+        "transport": "rest-batch",
+        "idempotent_retry_transport": "journal",
+        "idempotent_replay": true,
+        "thread_id": "PRRT_kwDOTiGpAs6TsdZD",
+        "comment_node_id": "PRRC_kwDOTiGpAs7ZfIr5",
+        "anchor": {
+          "path": "testdata/demo-prs/core/request_path.go",
+          "start_line": 4,
+          "line": 5,
+          "side": "RIGHT"
+        },
+        "suggestion_replacement_lines": 4
+      }
+    },
+    "mixed-review": {
+      "pull_request": 5,
+      "pull_url": "https://github.com/wildcard/gh-code-review/pull/5",
+      "pull_state": "CLOSED",
+      "head_sha": "da0fd121828c515c3ba4c45a1cdef2ac574be5b1",
+      "flat_pr_comments": 0,
+      "reviews": [
+        {
+          "id": 4777656885,
+          "state": "COMMENTED",
+          "url": "https://github.com/wildcard/gh-code-review/pull/5#pullrequestreview-4777656885"
+        }
+      ],
+      "review_comment_ids": [
+        3648819987,
+        3648820019
+      ],
+      "commands": [
+        "gh code-review inspect 5 -R wildcard/gh-code-review --include bodies",
+        "python3 scripts/demo_lab.py render --scenario mixed-review --pull-request 5 --output /tmp/gh-code-review-mixed.json",
+        "gh code-review validate --input /tmp/gh-code-review-mixed.json",
+        "gh code-review submit --input /tmp/gh-code-review-mixed.json --dry-run",
+        "gh code-review submit --input /tmp/gh-code-review-mixed.json"
+      ],
+      "results": {
+        "transport": "graphql-pending",
+        "line_thread_id": "PRRT_kwDOTiGpAs6TsdyB",
+        "line_comment_node_id": "PRRC_kwDOTiGpAs7ZfJMT",
+        "file_thread_id": "PRRT_kwDOTiGpAs6TsdyY",
+        "file_comment_node_id": "PRRC_kwDOTiGpAs7ZfJMz",
+        "subject_types": [
+          "LINE",
+          "FILE"
+        ],
+        "same_review": true
+      }
+    },
+    "review-lifecycle": {
+      "pull_request": 6,
+      "pull_url": "https://github.com/wildcard/gh-code-review/pull/6",
+      "pull_state": "CLOSED",
+      "head_sha": "09f233bb670dec838c4652f6443d6c7928006c5b",
+      "flat_pr_comments": 0,
+      "reviews": [
+        {
+          "id": 4777659246,
+          "state": "COMMENTED",
+          "url": "https://github.com/wildcard/gh-code-review/pull/6#pullrequestreview-4777659246"
+        },
+        {
+          "id": 4777662144,
+          "state": "COMMENTED",
+          "url": "https://github.com/wildcard/gh-code-review/pull/6#pullrequestreview-4777662144"
+        }
+      ],
+      "review_comment_ids": [
+        3648823068,
+        3648824217,
+        3648825436
+      ],
+      "commands": [
+        "gh code-review pending start 6 -R wildcard/gh-code-review",
+        "gh code-review pending show 6 -R wildcard/gh-code-review",
+        "gh code-review comment add 6 -R wildcard/gh-code-review --review-id 4777659246 --subject file --path demo-prs/lifecycle/service.conf --body \"Document whether zero retries disables recovery.\"",
+        "gh code-review comment edit -R wildcard/gh-code-review --comment-node-id PRRC_kwDOTiGpAs7ZfJ8c --body \"Zero retries disables recovery; please document that operational change.\"",
+        "gh code-review comment suggest 6 -R wildcard/gh-code-review --review-id 4777659246 --path demo-prs/lifecycle/service.conf --line 2 --side RIGHT --body \"Keep the previous recovery budget.\" --replacement-file /dev/stdin",
+        "gh code-review comment delete -R wildcard/gh-code-review --comment-node-id PRRC_kwDOTiGpAs7ZfKD- --confirm",
+        "gh code-review comment add 6 -R wildcard/gh-code-review --review-id 4777659246 --subject line --path demo-prs/lifecycle/service.conf --line 2 --side RIGHT --body \"A zero retry budget removes transient-failure recovery; retain a bounded retry path.\"",
+        "gh code-review review submit 6 -R wildcard/gh-code-review --review-id 4777659246 --event COMMENT --body \"Focused review of the retry policy.\"",
+        "gh code-review review list 6 -R wildcard/gh-code-review",
+        "gh code-review review show 6 -R wildcard/gh-code-review --review-id 4777659246",
+        "gh code-review review edit 6 -R wildcard/gh-code-review --review-id 4777659246 --body \"Focused review of the retry policy and recovery contract.\"",
+        "gh code-review comment edit -R wildcard/gh-code-review --comment-id 3648824217 --body \"A zero retry budget removes transient-failure recovery; retain a bounded retry path.\"",
+        "gh code-review comment delete -R wildcard/gh-code-review --comment-id 3648824344 --confirm",
+        "gh code-review thread list 6 -R wildcard/gh-code-review",
+        "gh code-review thread show 6 -R wildcard/gh-code-review --thread-id PRRT_kwDOTiGpAs6Tseh-",
+        "gh code-review thread reply 6 -R wildcard/gh-code-review --thread-id PRRT_kwDOTiGpAs6Tseh- --body \"The live demo confirms this remains actionable.\"",
+        "gh code-review thread resolve --thread-id PRRT_kwDOTiGpAs6Tseh- --confirm",
+        "gh code-review thread unresolve --thread-id PRRT_kwDOTiGpAs6Tseh- --confirm",
+        "gh code-review file viewed 6 -R wildcard/gh-code-review --path demo-prs/lifecycle/service.conf --confirm",
+        "gh code-review file unviewed 6 -R wildcard/gh-code-review --path demo-prs/lifecycle/service.conf --confirm",
+        "gh code-review pending start 6 -R wildcard/gh-code-review",
+        "gh code-review pending abandon 6 -R wildcard/gh-code-review --review-id 4777662709 --confirm"
+      ],
+      "results": {
+        "review_node_id": "PRR_kwDOTiGpAs8AAAABHMVLbg",
+        "file_thread_id": "PRRT_kwDOTiGpAs6TseVW",
+        "file_comment_node_id": "PRRC_kwDOTiGpAs7ZfJ8c",
+        "line_thread_id": "PRRT_kwDOTiGpAs6Tseh-",
+        "line_comment_node_id": "PRRC_kwDOTiGpAs7ZfKOZ",
+        "reply_comment_node_id": "PRRC_kwDOTiGpAs7ZfKhc",
+        "deleted_pending_comment_id": 3648823550,
+        "deleted_submitted_comment_id": 3648824344,
+        "abandoned_review_id": 4777662709,
+        "pending_after_cleanup": false,
+        "line_thread_final_resolved": false,
+        "file_final_viewed": false
+      }
+    },
+    "guardrails-fallback": {
+      "pull_request": 7,
+      "pull_url": "https://github.com/wildcard/gh-code-review/pull/7",
+      "pull_state": "CLOSED",
+      "head_sha": "1cf064373b9a74487911efafa56dbebdc5adcce1",
+      "flat_pr_comments": 0,
+      "reviews": [
+        {
+          "id": 4777666383,
+          "state": "COMMENTED",
+          "url": "https://github.com/wildcard/gh-code-review/pull/7#pullrequestreview-4777666383"
+        }
+      ],
+      "review_comment_ids": [
+        3648829878
+      ],
+      "commands": [
+        "python3 scripts/demo_lab.py render --scenario guardrails-fallback --pull-request 7 --output /tmp/gh-code-review-stale.json",
+        "python3 scripts/demo_lab.py advance --scenario guardrails-fallback --confirm",
+        "gh code-review validate --input /tmp/gh-code-review-stale.json",
+        "python3 skills/gh-code-review/scripts/gh_code_review_fallback.py validate --input /tmp/gh-code-review-stale.json",
+        "python3 scripts/demo_lab.py render --scenario guardrails-fallback --template self-approval --pull-request 7 --output /tmp/gh-code-review-self-approval.json",
+        "gh code-review validate --input /tmp/gh-code-review-self-approval.json",
+        "python3 scripts/demo_lab.py render --scenario guardrails-fallback --pull-request 7 --output /tmp/gh-code-review-fallback.json",
+        "python3 skills/gh-code-review/scripts/gh_code_review_fallback.py inspect 7 -R wildcard/gh-code-review",
+        "python3 skills/gh-code-review/scripts/gh_code_review_fallback.py validate --input /tmp/gh-code-review-fallback.json",
+        "python3 skills/gh-code-review/scripts/gh_code_review_fallback.py submit --input /tmp/gh-code-review-fallback.json",
+        "gh code-review review dismiss 7 -R wildcard/gh-code-review --review-id 4777666383 --message \"Disposable dismissal-safety check.\" --confirm-timeline-comment"
+      ],
+      "results": {
+        "old_head_sha": "bcda6a709768c955c54218ac96616a9fa78dbc7e",
+        "new_head_sha": "1cf064373b9a74487911efafa56dbebdc5adcce1",
+        "extension_stale_exit": 3,
+        "fallback_stale_exit": 3,
+        "stale_error_code": "HEAD_CHANGED",
+        "self_approval_exit": 2,
+        "self_approval_issue_code": "SELF_APPROVAL",
+        "fallback_review_node_id": "PRR_kwDOTiGpAs8AAAABHMVnTw",
+        "fallback_thread_id": "PRRT_kwDOTiGpAs6Tsfj6",
+        "fallback_comment_node_id": "PRRC_kwDOTiGpAs7ZfLm2",
+        "fallback_inspect_compact_in_v0_2": true,
+        "dismissal_exit": 8,
+        "dismissal_error_code": "GITHUB_CONFLICT",
+        "dismissal_timeline_comment_created": false
+      }
+    },
+    "codex-skill": {
+      "pull_request": 8,
+      "pull_url": "https://github.com/wildcard/gh-code-review/pull/8",
+      "pull_state": "CLOSED",
+      "head_sha": "e197ff362ed00a2aa31441b378357a943aa5825b",
+      "flat_pr_comments": 0,
+      "reviews": [
+        {
+          "id": 4777673736,
+          "state": "COMMENTED",
+          "url": "https://github.com/wildcard/gh-code-review/pull/8#pullrequestreview-4777673736"
+        }
+      ],
+      "review_comment_ids": [
+        3648839546
+      ],
+      "commands": [
+        "codex exec --ephemeral --sandbox danger-full-access \"Use $gh-code-review to inspect https://github.com/wildcard/gh-code-review/pull/8, review only the changed code, and post one formal COMMENT review with the smallest honest anchors. Do not modify files. Do not use a flat PR comment. Verify the resulting review and report its URL.\""
+      ],
+      "results": {
+        "agent": "Codex",
+        "model": "gpt-5.6-sol",
+        "cli_version": "0.145.0",
+        "prompt": "Use $gh-code-review to inspect https://github.com/wildcard/gh-code-review/pull/8, review only the changed code, and post one formal COMMENT review with the smallest honest anchors. Do not modify files. Do not use a flat PR comment. Verify the resulting review and report its URL.",
+        "thread_id": "PRRT_kwDOTiGpAs6TshZz",
+        "comment_node_id": "PRRC_kwDOTiGpAs7ZfN96",
+        "anchor": "demo-prs/agents/codex-settings.json:2",
+        "thread_current": true,
+        "thread_resolved": false,
+        "files_modified": false,
+        "sanitized_result": "Posted and verified one formal COMMENT review with one current inline thread on changed line 2, zero flat PR comments, and no file modifications.",
+        "ergonomics_finding": "The agent attempted --input - and had to fall back to process substitution because v0.1.1 treated '-' as a file path."
+      }
+    },
+    "claude-plugin": {
+      "pull_request": 9,
+      "pull_url": "https://github.com/wildcard/gh-code-review/pull/9",
+      "pull_state": "CLOSED",
+      "head_sha": "9c63c11ee9efa52ea8c348e4d7fc4ad6935ae90d",
+      "flat_pr_comments": 0,
+      "reviews": [
+        {
+          "id": 4777689847,
+          "state": "COMMENTED",
+          "url": "https://github.com/wildcard/gh-code-review/pull/9#pullrequestreview-4777689847"
+        }
+      ],
+      "review_comment_ids": [
+        3648863425
+      ],
+      "commands": [
+        "claude plugin marketplace add wildcard/gh-code-review",
+        "claude plugin install gh-code-review@gh-code-review --scope user",
+        "claude -p --model sonnet --effort medium --permission-mode bypassPermissions --output-format text --no-session-persistence \"Use the gh-code-review skill to inspect https://github.com/wildcard/gh-code-review/pull/9, review only the changed code, and post one formal COMMENT review with the smallest honest anchors. Do not modify files. Do not use a flat PR comment. Verify the resulting review and report its URL.\""
+      ],
+      "results": {
+        "agent": "Claude Code",
+        "model": "Sonnet",
+        "cli_version": "2.1.218",
+        "prompt": "Use the gh-code-review skill to inspect https://github.com/wildcard/gh-code-review/pull/9, review only the changed code, and post one formal COMMENT review with the smallest honest anchors. Do not modify files. Do not use a flat PR comment. Verify the resulting review and report its URL.",
+        "thread_id": "PRRT_kwDOTiGpAs6TsmTe",
+        "comment_node_id": "PRRC_kwDOTiGpAs7ZfTzB",
+        "anchor": "demo-prs/agents/claude-settings.yaml:2",
+        "thread_current": true,
+        "thread_resolved": false,
+        "files_modified": false,
+        "sanitized_result": "Posted and verified one formal COMMENT review with one current inline thread on changed line 2, zero flat PR comments, and no file modifications. The agent searched for consumers before wording an uncertain configuration finding."
+      }
+    }
+  }
+}

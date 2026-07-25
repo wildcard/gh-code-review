@@ -84,6 +84,21 @@ func TestLoadManifestJSONAndYAMLWithStrictFields(t *testing.T) {
 	}
 }
 
+func TestDecodeManifestFromStdinFormatDetection(t *testing.T) {
+	for name, content := range map[string]string{
+		"JSON": `{"schema_version":"1.0","repository":"o/r","pull_request":2,"expected_head_sha":"h","event":"COMMENT"}`,
+		"YAML": "schema_version: \"1.0\"\nrepository: o/r\npull_request: 2\nexpected_head_sha: h\nevent: COMMENT\n",
+	} {
+		manifest, err := DecodeManifest([]byte(content), "-")
+		if err != nil {
+			t.Fatalf("%s: %v", name, err)
+		}
+		if manifest.PullRequest != 2 {
+			t.Fatalf("%s: wrong manifest %#v", name, manifest)
+		}
+	}
+}
+
 func TestFingerprintExcludesAgentMetadata(t *testing.T) {
 	a := Comment{ClientID: "a", Subject: "line", Path: "a.go", Line: 1, Side: "RIGHT", Body: "same", Severity: "blocking"}
 	b := a

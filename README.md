@@ -53,6 +53,19 @@ Restart or reload Claude Code after installation.
 
 None of these installations happen automatically. The skill can use its bundled standard-library Python fallback when the extension is unavailable.
 
+## User guide and live review lab
+
+Follow [the user guide](docs/user-guide.md) for exact commands, portable agent
+prompts, and sanitized public PRs covering core submission, mixed line/file
+reviews, pending-review lifecycle operations, guardrails, the Python fallback,
+Codex, and Claude Code.
+
+The guide's evidence is machine-readable and read-only verifiable:
+
+```bash
+python3 scripts/demo_lab.py verify --live
+```
+
 ## Quick start
 
 Inspect the PR and existing review threads:
