@@ -1,0 +1,23 @@
+name: Demo evidence
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 8 * * 1"
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.9"
+      - run: python -m unittest tests.test_demo_lab
+      - run: python scripts/demo_lab.py verify --live
+        env:
+          GH_TOKEN: ${{ github.token }}

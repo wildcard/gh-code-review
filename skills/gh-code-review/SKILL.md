@@ -15,6 +15,7 @@ Use a formal pull-request review so every finding is anchored, individually foll
 3. If it is absent, offer `gh extension install wildcard/gh-code-review`. Never install without the user's consent.
 4. If installation is declined or unavailable, run `scripts/gh_code_review_fallback.py`. The fallback supports JSON manifests and the core `inspect`, `validate`, and `submit` transaction.
 5. Read [references/cli-reference.md](references/cli-reference.md) only for advanced lifecycle operations. Read [references/direct-api.md](references/direct-api.md) when the extension cannot be used.
+6. Read [references/live-examples.md](references/live-examples.md) when the user asks for an exact prompt, a walkthrough, or public evidence.
 
 ## Review workflow
 

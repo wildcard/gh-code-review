@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0",
+  "repository": "__REPOSITORY__",
+  "pull_request": 1,
+  "expected_head_sha": "__HEAD_SHA__",
+  "event": "COMMENT",
+  "summary": "The preview request limit should remain bounded.",
+  "idempotency_key": "demo-fallback-__HEAD_SHA__",
+  "comments": [
+    {
+      "client_id": "keep-preview-limit-bounded",
+      "subject": "line",
+      "path": "demo-prs/guardrails/policy.conf",
+      "line": 2,
+      "side": "RIGHT",
+      "body": "This raises the preview limit fivefold without changing the resource budget.",
+      "replacement": "request_limit=10",
+      "severity": "non_blocking",
+      "category": "reliability",
+      "confidence": 0.97
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+package demo
+
+func responseBody(body []byte, err error) string {
+	if err != nil {
+		return ""
+	}
+	return string(body)
+}
